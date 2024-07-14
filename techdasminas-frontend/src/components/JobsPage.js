@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
+import { firestore } from '../firebaseConfig';
 
 const JobsPage = () => {
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
     const fetchJobs = async () => {
-      const querySnapshot = await getDocs(collection(db, 'jobs'));
-      const jobsList = querySnapshot.docs.map(doc => doc.data());
+      const snapshot = await firestore.collection('jobs').get();
+      const jobsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setJobs(jobsList);
     };
     fetchJobs();
@@ -18,8 +17,8 @@ const JobsPage = () => {
     <div className="jobs-page">
       <h1>Vagas de Trabalho</h1>
       <ul>
-        {jobs.map((job, index) => (
-          <li key={index}>
+        {jobs.map(job => (
+          <li key={job.id}>
             <a href={job.link} target="_blank" rel="noopener noreferrer">
               {job.title}
             </a>
