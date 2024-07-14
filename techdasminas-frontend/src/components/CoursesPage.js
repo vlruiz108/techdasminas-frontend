@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { firestore } from '../firebaseConfig';
+import { db } from '../firebaseConfig';
+import { collection, getDocs } from "firebase/firestore"; 
 
 const CoursesPage = () => {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     const fetchCourses = async () => {
-      const snapshot = await firestore.collection('courses').get();
+      const snapshot = await getDocs(collection(db, 'courses'));
       const coursesList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setCourses(coursesList);
     };
@@ -15,7 +16,7 @@ const CoursesPage = () => {
 
   return (
     <div className="courses-page">
-      <h1>Recursos Educacionais</h1>
+      <h1>Cursos</h1>
       <ul>
         {courses.map(course => (
           <li key={course.id}>
